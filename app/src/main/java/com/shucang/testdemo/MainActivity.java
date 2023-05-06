@@ -8,12 +8,23 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 public class MainActivity extends Activity {
     public TextView textUrl;
     public TextView textParam1;
     public TextView textParam1Title;
     public TextView textParam2;
     public TextView textParam2Title;
+    String key = "12345678901234567890";
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,12 +41,18 @@ public class MainActivity extends Activity {
                 String[] arr = data.split("&");
                 for(int i = 0;i < arr.length;i++){
                     String[] arr1 = arr[i].split("=");
+                    String tempStr = "解码异常:target--" + arr1[1] + "key--" + key;
+                    try {
+                        tempStr = ZzSecurityHelper.decryptAES(arr1[1]);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     if(i == 0){
                         textParam1Title.setText(arr1[0]);
-                        textParam1.setText(arr1[1]);
+                        textParam1.setText(tempStr);
                     }else{
                         textParam2Title.setText(arr1[0]);
-                        textParam2.setText(arr1[1]);
+                        textParam2.setText(tempStr);
                     }
                 }
 
@@ -59,4 +76,7 @@ public class MainActivity extends Activity {
     }
 
 
+
 }
+
+
