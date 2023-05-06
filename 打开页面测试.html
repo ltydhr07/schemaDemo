@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<button id="openBtn" style="width: 200px;height: 200px">链接</button>
+</body>
+<script type="text/javascript">
+    // var ws = new WebSocket('ws://192.168.1.110:6790');
+    // ws.onopen = function () {
+    //     console.log('ws onopen');
+    //     ws.send('from client: hello');
+    //     alert("go");
+    // };
+    // ws.onmessage = function (e) {
+    //     console.log('ws onmessage');
+    //     alert('from server: ' + e.data);
+    // };
+
+    var downloader,
+        scheme = 'openapp://test:8000/product?thirdId=1',  // 需要打开的app scheme 地址
+        andDownload = 'http://47.100.198.111/SchemeDemo.apk';
+    var u = navigator.userAgent;
+    var isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //g
+    var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+
+    // 给 id 为 openBtn 的按钮添加点击事件处理函数
+    document.getElementById('openBtn').onclick = function() {
+        window.location.href = scheme;  // 尝试打开 scheme
+
+        // 设置3秒的定时下载任务，3秒之后下载app
+        downloader = setTimeout(function () {
+            window.location.href = andDownload;
+
+        }, 3000);
+    };
+
+    document.addEventListener('visibilitychange webkitvisibilitychange', function() {
+        // 如果页面隐藏，推测打开scheme成功，清除下载任务
+        if (document.hidden || document.webkitHidden) {
+            clearTimeout(downloader);
+        }
+    });
+    window.addEventListener('pagehide', function () {
+        clearTimeout(downloader);
+    });
+
+
+</script>
+</html>
