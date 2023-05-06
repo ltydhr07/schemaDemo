@@ -7,7 +7,18 @@
 </head>
 <body>
 <button id="openBtn" style="width: 200px;height: 200px">链接</button>
+<br/>
+key:  hj7x89H$yuBI0456（测试使用）<br/>
+iv: 1234567890abcdef（测试使用）<br/>
+<br/>
+<input id="encrypt" style="width: 200px;height: 30px"/>
+<button onclick="toEncrypt()" style="width: 200px;height: 30px">加密</button>
+<br/>
+<br/>
+<input id="decrypt" style="width: 200px;height: 30px"/>
+<button onclick="toDecrypt()" style="width: 200px;height: 30px">解密</button>
 </body>
+<script src="https://cdn.bootcss.com/crypto-js/3.1.9-1/crypto-js.min.js"></script>
 <script type="text/javascript">
     // var ws = new WebSocket('ws://192.168.1.110:6790');
     // ws.onopen = function () {
@@ -47,7 +58,42 @@
     window.addEventListener('pagehide', function () {
         clearTimeout(downloader);
     });
-
+    const key = CryptoJS.enc.Utf8.parse("hj7x89H$yuBI0456"); // 十六位十六进制数作为密钥
+    const iv = CryptoJS.enc.Utf8.parse('1234567890abcdef'); // 十六位十六进制数作为密钥偏移量
+    function toEncrypt(){
+        var word = document.getElementById("encrypt").value;
+        myEncrypt(word);
+    }
+    function toDecrypt(){
+        var word = document.getElementById("decrypt").value;
+        myDecrypt(word);
+    }
+    /* 加密方法 */
+    function myEncrypt(word) {
+        const srcs = CryptoJS.enc.Utf8.parse(word);
+        const encrypted = CryptoJS.AES.encrypt(srcs, key, {
+            iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.ZeroPadding
+        });
+        var result = CryptoJS.enc.Base64.stringify(encrypted.ciphertext);
+        alert(result);
+        return result;
+    }
+    /* 解密方法 */
+    function myDecrypt(word) {
+        const encryptedHexStr = CryptoJS.enc.Base64.parse(word);
+        const srcs = CryptoJS.enc.Base64.stringify(encryptedHexStr);
+        const decrypt = CryptoJS.AES.decrypt(srcs, key, {
+            iv,
+            mode: CryptoJS.mode.CBC,
+            padding: CryptoJS.pad.ZeroPadding
+        });
+        const decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
+        var result = decryptedStr.toString();
+        alert(result);
+        return result;
+    }
 
 </script>
 </html>
